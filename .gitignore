@@ -1,0 +1,4 @@
+*.py[cod]
+*.iml
+.idea/*
+.DS_Space
