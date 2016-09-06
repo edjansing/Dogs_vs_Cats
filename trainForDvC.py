@@ -23,6 +23,7 @@ import tensorflow as tf
 import DvCClassifier as dc
 import glob
 from os.path import join
+import tqdm
 
 dataDir = '/data/DogsvCats'
 
@@ -33,7 +34,8 @@ trainingFileList = glob.glob(join(dataDir, trainRoot))
 
 trainImages = []
 trainLabels = []
-for k in range(len(trainingFileList)):
+print('Extracting training/test data . . .')
+for k in tqdm(range(len(trainingFileList))):
     data = np.load(trainingFileList[k])
     if not k:
         trainImages = data['trainImages']
@@ -45,3 +47,11 @@ for k in range(len(trainingFileList)):
 data = np.load(join(dataDir, testFile))
 testImages = data['testImages']
 testLabels = data['testLabels']
+
+del data
+
+classifier = learn.TensorFlowEstimator(
+    model_fn=dc.conv_model, n_classes=2, batch_size=100, steps=5000,
+    learning_rate=0.0001)
+classifier.fit(trainImages, trainLabels)
+classifier.save('20160906_DvC_CNN')
