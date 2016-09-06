@@ -19,15 +19,10 @@ Versioning:
 
 import numpy as np
 import tensorflow as tf
-
-# preProcessImagery:  A method to subtract the "VGG" mean from each pixel
-# Expects the images array to be 4-D (numberSamples, height, width, channels)
-def preProcessImagery(images):
-    vggMean = [123.68, 116.779, 103.939]
-    return images - np.tile(vggMean, (images.shape[0], images.shape[1], images.shape[2], 1))
+from tensorflow.contrib import learn
 
 # maxPool2x2:  Performs a 2 x 2 max pooling on a tensor
-def maxPool2x2(inTensor):
+def max_pool_2x2(inTensor):
     return tf.nn.max_pool(
         inTensor, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
@@ -38,7 +33,8 @@ def conv_model(X, y):
     # height final dimension being the number of color channels.
     X = tf.reshape(X, [-1, 224, 224, 3])
     with tf.variable_scope('pre-process'):
-        X = preProcessImagery(X)
+        mean = tf.constant([123.68, 116.779, 103.939], dtype=tf.float32, shape=[1, 1, 1, 3], name='img_mean')
+        X = X - mean
 
     with tf.variable_scope('conv_layer1'):
         h_conv1 = learn.ops.conv2d(X, n_filters=32, filter_shape=[5, 5],

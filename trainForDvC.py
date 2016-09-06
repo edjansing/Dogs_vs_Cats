@@ -20,10 +20,11 @@ Versioning:
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.contrib import learn
 import DvCClassifier as dc
 import glob
 from os.path import join
-import tqdm
+from tqdm import tqdm
 
 dataDir = '/data/DogsvCats'
 
@@ -53,5 +54,5 @@ del data
 classifier = learn.TensorFlowEstimator(
     model_fn=dc.conv_model, n_classes=2, batch_size=100, steps=5000,
     learning_rate=0.0001)
-classifier.fit(trainImages, trainLabels)
+classifier.fit(trainImages, trainLabels, logdir='/data/DogsvCats/20160906_DvC_CNN/')
 classifier.save('20160906_DvC_CNN')
