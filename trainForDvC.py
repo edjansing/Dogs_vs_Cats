@@ -35,7 +35,7 @@ trainImages = []
 trainLabels = []
 for k in range(len(trainingFileList)):
     data = np.load(trainingFileList[k])
-    if trainImages == []:
+    if not k:
         trainImages = data['trainImages']
         trainLabels = data['trainLabels']
     else:
