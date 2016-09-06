@@ -23,10 +23,11 @@ Versioning:
 import numpy as np
 from skimage.io import imread
 from skimage.transform import resize
-import matplotlib.pyplot as plt
 import glob
 from os.path import join
 from tqdm import tqdm
+from random import shuffle
+import time
 
 def centerCrop(img):
     # Borrowed from "VGG in TensorFlow · Davi Frossard"
@@ -45,14 +46,16 @@ def returnFileList(inDir, pattName):
     return glob.glob(join(inDir, pattName))
 
 if __name__ == '__main__':
-    dataDir = '/Users/dave/Data/DogsvCats/train'
+    # dataDir = '/Users/dave/Data/DogsvCats/train'
+    dataDir = '/data/DogsvCats/train'
+
     dogFileList = returnFileList(dataDir, 'dog*')
     catFileList = returnFileList(dataDir, 'cat*')
     numberSamples = len(dogFileList) + len(catFileList)
     print('Total number of samples = %d' % numberSamples)
 
     # How much to hold out?
-    testSampleSize = np.ceil(numberSamples * 0.10)
+    testSampleSize = int(np.ceil(numberSamples * 0.10))
     print('Total number to hold out for test = %d' % testSampleSize)
 
     # Allocate numpy arrays
@@ -67,7 +70,23 @@ if __name__ == '__main__':
     for k in tqdm(range(len(catFileList))):
         img = imread(catFileList[k])
         images[k + len(dogFileList), :, :, :] = centerCrop(img)
-        labels[k] = 0.0
+        labels[k + len(dogFileList)] = 0.0
+
+    k = range(numberSamples)
+    shuffle(k)
+    images = images[k, :, :, :]
+    labels = labels[k]
+
+    testImages = images[:testSampleSize, :, :, :]
+    testLabels = labels[:testSampleSize]
+    trainImages = images[testSampleSize:, :, :, :]
+    trainLabels = labels[testSampleSize:]
 
     # Save off results
-    np.savez('/Users/dave/Data/DogsvCats/preprocImagery.npz', images=images, labels=labels)
+    np.savez_compressed('/data/DogsvCats/DvC_test.npz', testImages=testImages, testLabels=testLabels)
+    for k in range(0, numberSamples - testSampleSize, 2500):
+        tmpImages = trainImages[k:k+2500, :, :, :]
+        tmpLabels = trainLabels[k:k+2500]
+        tmpStr = '/data/DogsvCats/DvC_train_%d_to_%d.npz' % (k, k + 2500 - 1) 
+    	np.savez_compressed(tmpStr, trainImages=tmpImages, trainLabels=tmpLabels)
+
