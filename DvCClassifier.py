@@ -10,14 +10,12 @@ PY VER:     2.7.X
 Info:       This file defines the classifier that will be used for Dogs v Cat classification.
 
 Dependencies:
-            numpy
             tensorflow
 
 Versioning:
             0.01:  Initial version
 """
 
-import numpy as np
 import tensorflow as tf
 from tensorflow.contrib import learn
 
@@ -46,7 +44,7 @@ def conv_model(X, y):
                                    bias=True, activation=tf.nn.relu)
         h_pool2 = max_pool_2x2(h_conv2)
         # reshape tensor into a batch of vectors
-        h_pool2_flat = tf.reshape(h_pool2, [-1, 7 * 7 * 64])
+        h_pool2_flat = tf.reshape(h_pool2, [-1, 56 * 56 * 64])
 
     # densely connected layer with 1024 neurons.
     h_fc1 = learn.ops.dnn(

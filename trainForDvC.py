@@ -26,7 +26,7 @@ import glob
 from os.path import join
 from tqdm import tqdm
 
-dataDir = '/data/DogsvCats'
+dataDir = '/Users/dave/Data/DogsvCats'
 
 # Load up training data
 trainRoot = 'DvC_train_*'
@@ -53,6 +53,7 @@ del data
 
 classifier = learn.TensorFlowEstimator(
     model_fn=dc.conv_model, n_classes=2, batch_size=100, steps=5000,
-    learning_rate=0.0001)
-classifier.fit(trainImages, trainLabels, logdir='/data/DogsvCats/20160906_DvC_CNN/')
+    learning_rate=0.0001, verbose=1)
+# classifier.fit(trainImages, trainLabels, logdir='/Users/dave/Data/DogsvCats/20160906_DvC_CNN/')
+classifier.fit(trainImages, trainLabels)
 classifier.save('20160906_DvC_CNN')
