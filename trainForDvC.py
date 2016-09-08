@@ -52,8 +52,8 @@ testLabels = data['testLabels']
 del data
 
 classifier = learn.TensorFlowEstimator(
-    model_fn=dc.conv_model, n_classes=2, batch_size=100, steps=5000,
+    model_fn=dc.conv_model, n_classes=2, batch_size=100, steps=1000,
     learning_rate=0.0001, verbose=1)
-classifier.fit(trainImages, trainLabels, logdir='/data/DogsvCats/20160906_DvC_CNN/')
+classifier.fit(trainImages, trainLabels, logdir='/data/DogsvCats/20160907_DvC_CNN_log')
 # classifier.fit(trainImages, trainLabels)
-# classifier.save('20160906_DvC_CNN')
+classifier.save('/data/DogsvCats/20160907_DvC_CNN_model')
