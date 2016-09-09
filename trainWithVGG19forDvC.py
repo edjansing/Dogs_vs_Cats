@@ -31,21 +31,34 @@ from os.path import join
 # Get the data
 #-----------------------------------------------------------------------------------------------------------------------
 print('Get the data . . . ')
-dataDir = '/Users/dave/Data/DogsvCats'
-# testFile = 'DvC_test.npz'
-#
-# data = np.load(join(dataDir, testFile))
-# testImages = data['testImages']
-# testLabels = data['testLabels']
 
-trainFile = 'DvC_train_0_to_2499.npz'
-data = np.load(join(dataDir, trainFile))
-trainImages = data['trainImages']
-trainLabels = data['trainLabels']
+dataDir = '/data/DogsvCats'
+
+# Load up training data
+trainRoot = 'DvC_train_*'
+testFile = 'DvC_test.npz'
+trainingFileList = glob.glob(join(dataDir, trainRoot))
+
+trainImages = []
+trainLabels = []
+
+for k in tqdm(range(len(trainingFileList))):
+    data = np.load(trainingFileList[k])
+    if not k:
+        trainImages = data['trainImages']
+        trainLabels = data['trainLabels']
+    else:
+        trainImages = np.append(trainImages, data['trainImages'], axis = 0)
+        trainLabels = np.append(trainLabels, data['trainLabels'], axis = 0)
+
+data = np.load(join(dataDir, testFile))
+testImages = data['testImages']
+testLabels = data['testLabels']
 
 # Keras expects the imagery to be in (channel x row x col) format
-# testImages = np.transpose((2, 0, 1))
 trainImages = np.transpose(trainImages, (0, 3, 1, 2))
+testImages = np.transpose(testImages, (0, 3, 1, 2))
+
 print('Done!')
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -67,7 +80,7 @@ print('Done!')
 # Train
 #-----------------------------------------------------------------------------------------------------------------------
 print('Train . . .')
-model.fit(trainImages, trainLabels, validation_split=0.10, verbose=1, batch_size=32, nb_epoch=1)
+model.fit(trainImages, trainLabels, validation_split=0.10, verbose=1, batch_size=256, nb_epoch=1)
 print('Done!')
 
 #-----------------------------------------------------------------------------------------------------------------------
