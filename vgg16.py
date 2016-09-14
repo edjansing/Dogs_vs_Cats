@@ -91,7 +91,7 @@ def vgg16(backendWeightsFile=None, frontendWeightsFile=None, img_width=150, img_
         print('Backend model loaded.')
 
     model.add(Flatten())
-    model.add(Dense(256, activation='relu', trainable=frontendTrainableFlag, name='Dense1'))
+    model.add(Dense(300, activation='relu', trainable=frontendTrainableFlag, name='Dense1'))
     model.add(Dropout(0.5))
     model.add(Dense(1, activation='sigmoid', trainable=frontendTrainableFlag, name='Dense2'))
 
